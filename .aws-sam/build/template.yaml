@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'KinesisToS3
+
+  Sample SAM Template for KinesisToS3
+
+  '
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  KinesisToS3Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: KinesisToS3Function
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Tracing: Active
+      MemorySize: 512
+      Role: arn:aws:iam::052356098547:role/service-role/PVC_Kinesis_IAM
+      Events:
+        Kinesis1:
+          Type: Kinesis
+          Properties:
+            Stream:
+              Fn::GetAtt:
+              - KinesisStream1
+              - Arn
+            StartingPosition: LATEST
+            BatchSize: 100
+  KinesisStream1:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      ShardCount: 1
